@@ -4,12 +4,15 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Typeface;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import java.util.Random;
+
+import static android.R.attr.spacing;
 
 //import static android.R.attr.width;
 
@@ -105,7 +108,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         Sheight = getResources().getDisplayMetrics().heightPixels;
         Swidth = getResources().getDisplayMetrics().widthPixels;
 
-        grid = new Grid(16, 10);
+        grid = new Grid(3, 3);
 
 
 
@@ -121,13 +124,24 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
+
+        int x = (int) event.getX();
+        int y = (int) event.getY();
+        Point p = new Point(x,y);
+
         if(event.getAction()==MotionEvent.ACTION_DOWN){
             //determine where the user is touching and act accordingly
+
+            //check tiles
+            grid.checkTiles(p);
+
+
+
             return true;
         }
         if(event.getAction()==MotionEvent.ACTION_UP)
         {
-            player.setUp(false);
+            //player.setUp(false);
             tapTimer = System.nanoTime();
             oneTap = true;
             return true;

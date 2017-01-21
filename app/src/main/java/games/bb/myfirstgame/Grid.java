@@ -2,6 +2,8 @@ package games.bb.myfirstgame;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.Rect;
 
 import static android.R.attr.width;
 
@@ -26,10 +28,12 @@ public class Grid {
 
         tiles = new Tile[c][r];
 
+        int middle = height/2;
+
         //order like reading a book top left to bottom right
         for (int i = 0; i < columns; i++){
             for (int j = 0; j < rows; j++){
-                tiles[i][j] = new Tile();
+                tiles[i][j] = new Tile(spacing*(i+1),(int)(middle-(spacing/2.0)*rows)+spacing*(j),spacing);
 
             }
         }
@@ -39,6 +43,8 @@ public class Grid {
 
 
     public void draw(Canvas C){
+
+        C.drawRGB(222,222,222);
 
         Paint paint = new Paint();
         paint.setStrokeWidth(width/(20*columns));
@@ -74,6 +80,7 @@ public class Grid {
         //order like reading a book top left to bottom right
         for (int i = 0; i < columns; i++){
             for (int j = 0; j < rows; j++){
+                //C.drawCircle(tiles[i][j].getX(),tiles[i][j].getY(),6,numbers);
                 C.drawText(new Integer(tiles[i][j].getCount()).toString(),spacing*(i+1)+(int)((spacing/100.0)*23.0),
                         (int)(middle-(spacing/2.0)*rows)+spacing*(j)+(int)((spacing/100.0)*87.0),numbers);
 
@@ -81,5 +88,19 @@ public class Grid {
         }
 
 
+    }
+
+    public boolean checkTiles(Point p){
+        int middle = height/2;
+        //iterate all tiles
+        for (int i = 0; i < columns; i++){
+            for (int j = 0; j < rows; j++){
+                if (tiles[i][j].touched(p)){
+                    return true;
+                }
+
+            }
+        }
+        return false;
     }
 }
