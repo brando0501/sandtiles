@@ -10,22 +10,30 @@ import android.graphics.Point;
 
 public class Tile {
     private int count = 0;
-    private int x, y, sideLength;
+    private int topple = 4;
 
-    public Tile(int xpos, int ypos, int l){
+    private int x, y, sideLength, row, column;
+
+    public Tile(int xpos, int ypos, int l, int col, int r){
         x = xpos;
         y = ypos;
         sideLength = l;
+
+        row = r;
+        column = col;
 
 
 
     }
 
-    public Tile(int xpos, int ypos, int l, int c){
+    public Tile(int xpos, int ypos, int l, int c, int col, int r){
         x = xpos;
         y = ypos;
         sideLength = l;
         count = c;
+
+        row = r;
+        column = col;
     }
 
     public int getCount(){
@@ -40,10 +48,26 @@ public class Tile {
 
     public boolean touched(Point p){
         if(x<p.x&&p.x<x+sideLength&&y<p.y&&p.y<y+sideLength){
-            count++;
+
+
             return true;
         }
         return false;
+    }
+
+    public boolean increase(){
+        count++;
+        return update();
+    }
+
+    public boolean update(){
+
+        if (count >= topple){
+            count = count - 4;
+            return true;
+        }
+        return false;
+
     }
 
 }

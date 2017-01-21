@@ -5,7 +5,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 
-import static android.R.attr.width;
+
 
 /**
  * Created by brand on 1/20/2017.
@@ -14,8 +14,9 @@ import static android.R.attr.width;
 public class Grid {
 
     private int rows, columns, spacing, width, height;
+    private int topple = 4;
 
-    Tile[][] tiles;
+    public Tile[][] tiles;
 
 
     //this looks backwards but it is so that you can make a grid with the input in form (x,y)
@@ -33,7 +34,7 @@ public class Grid {
         //order like reading a book top left to bottom right
         for (int i = 0; i < columns; i++){
             for (int j = 0; j < rows; j++){
-                tiles[i][j] = new Tile(spacing*(i+1),(int)(middle-(spacing/2.0)*rows)+spacing*(j),spacing);
+                tiles[i][j] = new Tile(spacing*(i+1),(int)(middle-(spacing/2.0)*rows)+spacing*(j),spacing,i,j);
 
             }
         }
@@ -96,6 +97,12 @@ public class Grid {
         for (int i = 0; i < columns; i++){
             for (int j = 0; j < rows; j++){
                 if (tiles[i][j].touched(p)){
+
+                    if (tiles[i][j].increase()) {
+                        rippleTiles(i, j);
+                    }
+
+
                     return true;
                 }
 
@@ -103,4 +110,20 @@ public class Grid {
         }
         return false;
     }
+
+    public void rippleTiles(int i, int j){
+        //have to reference all tiles from here to avoid static issues
+        if(i-1>=0){if(tiles[i-1][j].increase()){
+            rippleTiles(i-1,j);}}//left
+        if(i+1<columns){if(tiles[i+1][j].increase()) {
+            rippleTiles(i+1, j);}}//right
+        if(j-1>=0){if(tiles[i][j-1].increase()){
+            rippleTiles(i,j-1);}}//top
+        if(j+1<rows){if(tiles[i][j+1].increase()){
+            rippleTiles(i,j+1);}}//bottom
+    }
+
+    public int getTopple(){return topple;}
+
+    public Tile[][] getTiles(){return tiles;}
 }
