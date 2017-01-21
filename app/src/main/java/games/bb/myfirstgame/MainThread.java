@@ -39,6 +39,7 @@ public class MainThread extends Thread
                 synchronized (surfaceHolder) {
                     this.gamePanel.update();
                     this.gamePanel.draw(canvas);
+                    this.gamePanel.checkWinner();
                 }
             } catch (Exception e) {
                 System.out.println("ERROR");

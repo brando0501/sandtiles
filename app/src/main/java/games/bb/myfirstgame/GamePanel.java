@@ -152,6 +152,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
     public void update()
     {
+        if (grid.getWinner()>=0){
+            System.out.println("A WINNER HAS BEEN FOUND!!!");
+            grid = new Grid(3,3);
+        }
 
     }
 
@@ -226,6 +230,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         paint.setTextSize(30);
         paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
 
+    }
+
+    public void checkWinner(){
+        grid.tileStatus();
     }
 
 
