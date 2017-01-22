@@ -4,7 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-
+import android.text.TextPaint;
 
 
 /**
@@ -36,6 +36,8 @@ public class Grid {
         width = GamePanel.Swidth;
         spacing = (int)(Integer.valueOf(width).doubleValue()/(double)(c+2));
 
+        tilesToWin = (int)(((rows*columns))/4.0);
+
         tiles = new Tile[c][r];
 
         int middle = height/2;
@@ -54,13 +56,20 @@ public class Grid {
 
     public void draw(Canvas C){
 
+        System.out.println(rows +" "+ columns);
+
+
+
         C.drawRGB(222,222,222);
 
         Paint paint = new Paint();
         paint.setStrokeWidth(width/(20*columns));
         paint.setARGB(255,244,84,32);
+        paint.setFlags(TextPaint.ANTI_ALIAS_FLAG);
 
         int middle = height/2;
+
+        //C.drawLine(0,0,width,height,paint);
 
         //vertical
         for (int i = 0; i<=columns; i++){
@@ -83,10 +92,8 @@ public class Grid {
         Paint numbers = new Paint();
 
         numbers.setTextSize(spacing);
-
-
-
-
+        numbers.setFlags(TextPaint.ANTI_ALIAS_FLAG);
+        numbers.setFakeBoldText(true);
 
 
         //order like reading a book top left to bottom right
@@ -117,7 +124,50 @@ public class Grid {
             }
         }
 
+        drawStats(C);
 
+
+    }
+
+    public void drawStats(Canvas C){
+        int middleH = height/2;
+        int middleW = width/2;
+
+        Paint paint = new Paint();
+        paint.setTextSize(width/12);
+        paint.setFlags(TextPaint.ANTI_ALIAS_FLAG);
+
+        //currently only displays first two players
+        Rect bounds = new Rect();
+        Paint textPaint = paint;
+
+
+        String toWinString = ("To Win: " + (rows*columns-tilesToWin));
+        textPaint.getTextBounds(toWinString, 0, toWinString.length(), bounds);
+        int Twidth = bounds.width();
+        paint.setARGB(255, 0, 0, 0);
+        C.drawText(toWinString,middleW-Twidth/2,(int)(middleH+(spacing/2.0)*rows)+(int)((height/100.0)*5.0),paint);
+
+        paint.setARGB(255, 255, 50, 50);
+        C.drawText("Player 1: " + playerStatus(0),spacing-(int)((width/100.0)*8.0),(int)(middleH+(spacing/2.0)*rows)+(int)((height/100.0)*10.0),paint);
+
+        paint.setARGB(255, 50, 50, 255);
+        C.drawText("Player 2: " + playerStatus(1),spacing+middleW-(int)((width/100.0)*8.0),(int)(middleH+(spacing/2.0)*rows)+(int)((height/100.0)*10.0),paint);
+
+        //C.drawText("test",0,20,paint);
+
+    }
+
+    public int playerStatus(int p){
+        int tileCount = 0;
+        for (int i = 0; i < columns; i++){
+            for (int j = 0; j < rows; j++){
+                if (tiles[i][j].getOwnership()==p){
+                    tileCount++;
+                }
+            }
+        }
+        return tileCount;
     }
 
     public boolean checkTiles(Point p){
@@ -154,7 +204,7 @@ public class Grid {
             rippleTiles(i,j+1);}}//bottom
     }
 
-    public void tileStatus(){
+    public void winStatus(){
         //order like reading a book top left to bottom right
         int[] playas = new int[players];
         for (int i = 0; i < columns; i++){
@@ -166,14 +216,14 @@ public class Grid {
         }
 
         for (int i = 0; i<playas.length; i++){
-            if (playas[i]>(rows*columns)-tilesToWin){
+            if (playas[i]>=(rows*columns)-tilesToWin){
                 winner = i;
             }
         }
     }
 
     public int getWinner(){
-        tileStatus();
+        winStatus();
         return winner;
     }
 

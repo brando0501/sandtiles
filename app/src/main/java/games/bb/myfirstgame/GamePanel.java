@@ -108,7 +108,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         Sheight = getResources().getDisplayMetrics().heightPixels;
         Swidth = getResources().getDisplayMetrics().widthPixels;
 
-        grid = new Grid(3, 3);
+        grid = new Grid(5, 5);
 
 
 
@@ -154,7 +154,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     {
         if (grid.getWinner()>=0){
             System.out.println("A WINNER HAS BEEN FOUND!!!");
-            grid = new Grid(3,3);
+            grid = new Grid(4,4);
         }
 
     }
@@ -205,7 +205,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             {
                 //explosion.draw(canvas);
             }
-            drawText(canvas);
+            //drawText(canvas);
             canvas.restoreToCount(savedState);
 
         }
@@ -233,7 +233,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     }
 
     public void checkWinner(){
-        grid.tileStatus();
+        grid.winStatus();
     }
 
 
