@@ -149,10 +149,10 @@ public class Grid {
         C.drawText(toWinString,middleW-Twidth/2,(int)(middleH+(spacing/2.0)*rows)+(int)((height/100.0)*5.0),paint);
 
         paint.setARGB(255, 255, 50, 50);
-        C.drawText("Player 1: " + playerStatus(0),spacing-(int)((width/100.0)*8.0),(int)(middleH+(spacing/2.0)*rows)+(int)((height/100.0)*10.0),paint);
+        C.drawText("Player 1: " + playerStatus(0),(int)((width/100.0)*7.0),(int)(middleH+(spacing/2.0)*rows)+(int)((height/100.0)*10.0),paint);
 
         paint.setARGB(255, 50, 50, 255);
-        C.drawText("Player 2: " + playerStatus(1),spacing+middleW-(int)((width/100.0)*8.0),(int)(middleH+(spacing/2.0)*rows)+(int)((height/100.0)*10.0),paint);
+        C.drawText("Player 2: " + playerStatus(1),middleW+(int)((width/100.0)*5.0),(int)(middleH+(spacing/2.0)*rows)+(int)((height/100.0)*10.0),paint);
 
         //C.drawText("test",0,20,paint);
 
@@ -171,13 +171,13 @@ public class Grid {
     }
 
     public boolean checkTiles(Point p){
-        turns++;
-        playerSlot = turns%players;
-        int middle = height/2;
+
         //iterate all tiles
         for (int i = 0; i < columns; i++){
             for (int j = 0; j < rows; j++){
                 if (tiles[i][j].touched(p)){
+                    playerSlot = turns%players;
+                    turns++;
 
                     if (tiles[i][j].increase(playerSlot)) {
                         rippleTiles(i, j);
