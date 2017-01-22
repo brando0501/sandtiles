@@ -1,6 +1,8 @@
 package games.bb.myfirstgame;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -9,10 +11,15 @@ import android.graphics.Typeface;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
 
 import java.util.Random;
 
 import static android.R.attr.spacing;
+import static android.graphics.BitmapFactory.decodeResource;
+import static games.bb.myfirstgame.MainThread.canvas;
 
 //import static android.R.attr.width;
 
@@ -33,6 +40,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     private Background bg;
     private Basket basket;
 
+    private games.bb.myfirstgame.Button menuButton;
+
     private Grid grid;
 
     private long tapTimer;
@@ -47,6 +56,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     private boolean oneTap = true;
 
     private boolean firstDraw = true;
+
+    private boolean displayMenu = false;
+
+    private PopupMenu popupMenu;
 
     //public int height, width;
 
@@ -69,8 +82,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         super(context);
 
 
-
-
         //add the callback to the surfaceholder to intercept events
         getHolder().addCallback(this);
 
@@ -78,6 +89,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
         //make gamePanel focusable so it can handle events
         setFocusable(true);
+
+
+
     }
 
     @Override
@@ -110,6 +124,15 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
         grid = new Grid(5, 5);
 
+        menuButton = new games.bb.myfirstgame.Button(BitmapFactory.decodeResource(getResources(), R.drawable.menubutton),0,0,.25);//hard scale not based on screen size
+
+        games.bb.myfirstgame.Button[] popupButtons = new games.bb.myfirstgame.Button[2];
+        popupButtons[0] = new games.bb.myfirstgame.Button(BitmapFactory.decodeResource(getResources(), R.drawable.buttonorangeclose),60*Swidth/100,80*Sheight/100,.25);
+        popupButtons[1] = new games.bb.myfirstgame.Button(BitmapFactory.decodeResource(getResources(), R.drawable.buttonorangereset),20*Swidth/100,80*Sheight/100,.25);
+
+        popupMenu = new PopupMenu(Swidth/8,Sheight/8,6*Swidth/8,6*Sheight/8,popupButtons);
+
+
 
 
 
@@ -133,7 +156,40 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             //determine where the user is touching and act accordingly
 
             //check tiles
-            grid.checkTiles(p);
+            if (!displayMenu) {
+                grid.checkTiles(p);
+            }
+
+            //check buttons
+            if (menuButton.tapped(x,y)){
+                displayMenu = true;
+
+            }
+            //for popupMenu
+            if (displayMenu){
+                games.bb.myfirstgame.Button[] tempButtons = popupMenu.getButtons();
+                for (int i = 0; i<tempButtons.length;i++){
+                    if (tempButtons[i].tapped(x,y)){
+                        switch (i) {
+                            case 0://close
+                                displayMenu = false;
+                                break;
+                            case 1://reset
+                                grid = new Grid(grid.getColumns(),grid.getRows());
+                                break;
+                            case 2:
+
+                                break;
+                            case 3:
+
+                                break;
+                            case 4:
+
+                                break;
+                        }
+                    }
+                }
+            }
 
 
 
@@ -152,9 +208,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
     public void update()
     {
+
+
+
+
         if (grid.getWinner()>=0){
             System.out.println("A WINNER HAS BEEN FOUND!!!");
-            grid = new Grid(4,4);
+            displayMenu = true;
         }
 
     }
@@ -184,8 +244,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
 
             grid.draw(canvas);
+            menuButton.draw(canvas);
             //bg.draw(canvas);
             //grid.draw(canvas);
+
+            if (displayMenu){
+                popupMenu.draw(canvas);
+
+            }
 
 
             //bg.draw(canvas);
@@ -235,6 +301,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     public void checkWinner(){
         grid.winStatus();
     }
+
+
 
 
 

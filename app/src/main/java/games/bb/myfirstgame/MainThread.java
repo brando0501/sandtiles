@@ -16,6 +16,8 @@ public class MainThread extends Thread
         super();
         this.surfaceHolder = surfaceHolder;
         this.gamePanel = gamePanel;
+
+
     }
     @Override
     public void run()
@@ -33,13 +35,14 @@ public class MainThread extends Thread
 
             //try locking the canvas for pixel editing
             try {
-                System.out.println("in try");
+
                 canvas = this.surfaceHolder.lockCanvas();
-                System.out.println("after canvas");
+
                 synchronized (surfaceHolder) {
                     this.gamePanel.update();
                     this.gamePanel.draw(canvas);
                     this.gamePanel.checkWinner();
+
                 }
             } catch (Exception e) {
                 System.out.println("ERROR");

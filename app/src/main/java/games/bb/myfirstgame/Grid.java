@@ -1,10 +1,15 @@
 package games.bb.myfirstgame;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.text.TextPaint;
+import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
 
 
 /**
@@ -18,6 +23,10 @@ public class Grid {
     private int players = 2;
     private int tilesToWin = 2;//tiles allowed to NOT be owned by winner
     private int winner = -1;//-1 until winner declared
+
+
+
+
 
     private Tile[][] tiles;
 
@@ -73,21 +82,21 @@ public class Grid {
 
         //vertical
         for (int i = 0; i<=columns; i++){
-            C.drawLine(spacing*(i+1),(int)(middle-(spacing/2.0)*rows),
-                    spacing*(i+1),(int)(middle+(spacing/2.0)*rows),paint);
+            C.drawLine(spacing*(i+1)+paint.getStrokeWidth()/2,(int)(middle-(spacing/2.0)*rows),
+                    spacing*(i+1)+paint.getStrokeWidth()/2,(int)(middle+(spacing/2.0)*rows),paint);
         }
 
         //horizontal
         for (int i = 0; i<=rows; i++){
-            C.drawLine(spacing,(int)(middle-(spacing/2.0)*rows)+spacing*(i),
-                    spacing*(columns+1),(int)(middle-(spacing/2.0)*rows)+spacing*(i),paint);
+            C.drawLine(spacing+paint.getStrokeWidth()/2,(int)(middle-(spacing/2.0)*rows)+spacing*(i),
+                    spacing*(columns+1)+paint.getStrokeWidth()/2,(int)(middle-(spacing/2.0)*rows)+spacing*(i),paint);
         }
 
         //dot corners TL BL TR BR
-        C.drawCircle(spacing,(int)(middle-(spacing/2.0)*rows),paint.getStrokeWidth()/2,paint);
-        C.drawCircle(spacing,(int)(middle+(spacing/2.0)*rows),paint.getStrokeWidth()/2,paint);
-        C.drawCircle(spacing*(columns+1),(int)(middle-(spacing/2.0)*rows),paint.getStrokeWidth()/2,paint);
-        C.drawCircle(spacing*(columns+1),(int)(middle+(spacing/2.0)*rows),paint.getStrokeWidth()/2,paint);
+        C.drawCircle(spacing+paint.getStrokeWidth()/2,(int)(middle-(spacing/2.0)*rows),paint.getStrokeWidth()/2,paint);
+        C.drawCircle(spacing+paint.getStrokeWidth()/2,(int)(middle+(spacing/2.0)*rows),paint.getStrokeWidth()/2,paint);
+        C.drawCircle(spacing*(columns+1)+paint.getStrokeWidth()/2,(int)(middle-(spacing/2.0)*rows),paint.getStrokeWidth()/2,paint);
+        C.drawCircle(spacing*(columns+1)+paint.getStrokeWidth()/2,(int)(middle+(spacing/2.0)*rows),paint.getStrokeWidth()/2,paint);
 
         Paint numbers = new Paint();
 
@@ -125,6 +134,10 @@ public class Grid {
         }
 
         drawStats(C);
+
+
+
+
 
 
     }
@@ -230,4 +243,8 @@ public class Grid {
     public int getTopple(){return topple;}
 
     public Tile[][] getTiles(){return tiles;}
+
+    public int getRows(){return rows;}
+
+    public int getColumns(){return columns;}
 }
