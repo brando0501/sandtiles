@@ -41,6 +41,22 @@ public class Dropdown {
 
     }
 
+    public Dropdown(String[] o, Button[] b, Button main, int start){
+
+        options = o;
+        buttons = b;
+        mainButton = main;
+
+        currentSelection = start;
+
+
+        optionsPaint.setARGB(255,0,0,0);
+        optionsPaint.setStrokeWidth(GamePanel.Swidth/50);
+        optionsPaint.setFlags(TextPaint.ANTI_ALIAS_FLAG);
+        optionsPaint.setTextSize(displayAtOnce*7*GamePanel.Swidth/300);
+
+    }
+
     public void draw(Canvas C){
         int x,y,width,height;
 
@@ -97,7 +113,6 @@ public class Dropdown {
 
             //draw options
 
-            int t = 23;
             bounds = new Rect();
             optionsPaint.getTextBounds("Sample", 0, 6, bounds);//cant use for width
             int textHeight = bounds.height();
@@ -150,5 +165,18 @@ public class Dropdown {
         if (currentSelection<0){//this is not an elegant solution fix if have time
             currentSelection+=options.length;
         }
+    }
+
+    public int getCurrentSelection(){
+        System.out.println("current selection" + currentSelection);
+        return getShiftedDimensions(currentSelection);
+    }
+
+    public int getShiftedDimensions(int i){
+        int gridStart = 2;//what number do the options begin at
+        int gridEnd = 13;//what number do the options end at
+        int r = (((options.length-displayAtOnce/2)+i)+options.length)%(options.length);
+        if (r == 11){return 13;}//this is a godawful solution fix if can
+        return gridEnd -1 - r;
     }
 }
