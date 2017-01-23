@@ -411,12 +411,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         tempDrops[0] = new Dropdown(new String[] {"Choose one","Standard", "Sandbox"},upDown,mainDrop);
 
         mainDrop = new games.bb.myfirstgame.Button(BitmapFactory.decodeResource(getResources(), R.drawable.buttonorangex),
-                popupX+10*popupW/100-(int)(standardButtonScale*BitmapFactory.decodeResource(getResources(), R.drawable.buttonorangex).getWidth()/2),popupY+20*popupH/100,standardButtonScale);//x
+                popupX+25*popupW/100-(int)(standardButtonScale*BitmapFactory.decodeResource(getResources(), R.drawable.buttonorangex).getWidth()/2),popupY+40*popupH/100,standardButtonScale);//x
 
         tempDrops[1] = new Dropdown(new String[] {"13","12","11","10","9","8","7","6","5","4","3","2"},upDown,mainDrop,11);
 
         mainDrop = new games.bb.myfirstgame.Button(BitmapFactory.decodeResource(getResources(), R.drawable.buttonorangey),
-                popupX+90*popupW/100-(int)(standardButtonScale*BitmapFactory.decodeResource(getResources(), R.drawable.buttonorangey).getWidth()/2),popupY+20*popupH/100,standardButtonScale);//y
+                popupX+75*popupW/100-(int)(standardButtonScale*BitmapFactory.decodeResource(getResources(), R.drawable.buttonorangey).getWidth()/2),popupY+40*popupH/100,standardButtonScale);//y
 
         tempDrops[2] = new Dropdown(new String[] {"13","12","11","10","9","8","7","6","5","4","3","2"},upDown,mainDrop,11);
 
