@@ -169,6 +169,8 @@ public class Grid {
 
         //C.drawText("test",0,20,paint);
 
+
+
     }
 
     public int playerStatus(int p){

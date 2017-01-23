@@ -21,12 +21,11 @@ public class Button {
         x=xpos;
         y=ypos;
         scale = s;
+        width = (int)(i.getWidth()*s);
+        height = (int)(i.getHeight()*s);
 
         image = Bitmap.createScaledBitmap(
-                i, (int)(i.getWidth()*s), (int)(i.getHeight()*s), true);
-
-        width=i.getWidth();
-        height=i.getHeight();
+                i, width, height, true);
 
 
     }
@@ -42,6 +41,14 @@ public class Button {
     public boolean tapped(int xp, int yp){
         return (x<xp&&xp<x+image.getWidth()&&y<yp&&yp<y+image.getHeight());
     }
+
+    public void setX(int xpos){x=xpos;}
+    public void setY(int ypos){y=ypos;}
+
+    public int getX(){return x;}
+    public int getY(){return y;}
+    public int getWidth(){return width;}
+    public int getHeight(){return height;}
 
 
 

@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import static android.R.attr.spacing;
@@ -57,9 +58,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
     private boolean firstDraw = true;
 
-    private boolean displayMenu = false;
+    private boolean displayMenu = false, displayNewGameMenu = false;
 
-    private PopupMenu popupMenu;
+    private PopupMenu popupMenu, newGameMenu;
+
+    private Dropdown gameType, rowSelect, columnSelect;
+
+    private ArrayList<Dropdown> dropdowns = new ArrayList<Dropdown>();
 
     //public int height, width;
 
@@ -126,11 +131,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
         menuButton = new games.bb.myfirstgame.Button(BitmapFactory.decodeResource(getResources(), R.drawable.menubutton),0,0,.25);//hard scale not based on screen size
 
-        games.bb.myfirstgame.Button[] popupButtons = new games.bb.myfirstgame.Button[2];
-        popupButtons[0] = new games.bb.myfirstgame.Button(BitmapFactory.decodeResource(getResources(), R.drawable.buttonorangeclose),60*Swidth/100,80*Sheight/100,.25);
-        popupButtons[1] = new games.bb.myfirstgame.Button(BitmapFactory.decodeResource(getResources(), R.drawable.buttonorangereset),20*Swidth/100,80*Sheight/100,.25);
-
-        popupMenu = new PopupMenu(Swidth/8,Sheight/8,6*Swidth/8,6*Sheight/8,popupButtons);
+        createMenus();
 
 
 
@@ -156,13 +157,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             //determine where the user is touching and act accordingly
 
             //check tiles
-            if (!displayMenu) {
+            if (!displayMenu&&!displayNewGameMenu) {
                 grid.checkTiles(p);
             }
 
             //check buttons
             if (menuButton.tapped(x,y)){
                 displayMenu = true;
+                displayNewGameMenu = false;
 
             }
             //for popupMenu
@@ -177,7 +179,49 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                             case 1://reset
                                 grid = new Grid(grid.getColumns(),grid.getRows());
                                 break;
-                            case 2:
+                            case 2://new Game
+                                displayMenu = false;
+                                displayNewGameMenu = true;
+
+                                break;
+                            case 3:
+
+                                break;
+                            case 4:
+
+                                break;
+                        }
+                    }
+                }
+
+
+            }
+            //for newGameMenu
+            if (displayNewGameMenu) {
+                games.bb.myfirstgame.Button[] bButtons = newGameMenu.getButtons();
+                games.bb.myfirstgame.Button[] dropButtons = new games.bb.myfirstgame.Button[newGameMenu.getDropdowns().length];
+
+                for (int i = 0; i < newGameMenu.getDropdowns().length;i++){
+                    dropButtons[i]=(newGameMenu.getDropdowns()[i].getMainButton());
+                }
+
+                games.bb.myfirstgame.Button[] tempButtons = new games.bb.myfirstgame.Button[bButtons.length + dropButtons.length];
+                System.arraycopy(bButtons, 0, tempButtons, 0, bButtons.length);
+                System.arraycopy(dropButtons, 0, tempButtons, bButtons.length, dropButtons.length);
+
+                for (int i = 0; i < tempButtons.length; i++) {
+                    if (tempButtons[i].tapped(x, y)) {
+                        switch (i) {
+                            case 0://gameType
+                                dropdowns.get(0).setDrawDrop(!dropdowns.get(0).isDrawDrop());
+                                System.out.println("GAME TYPE PRESSED");
+                                break;
+                            case 1://reset
+                                grid = new Grid(grid.getColumns(), grid.getRows());
+                                break;
+                            case 2://new Game
+                                displayMenu = false;
+                                displayNewGameMenu = true;
 
                                 break;
                             case 3:
@@ -191,6 +235,24 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 }
             }
 
+            for (int i = 0; i<dropdowns.size(); i++) {
+                if (dropdowns.get(i).isDrawDrop()) {
+                    for (int j = 0; j<2; j++) {
+
+                        if (dropdowns.get(i).getButtons()[j].tapped(x, y)) {
+                            switch (j) {
+                                case 0://gameType
+                                    dropdowns.get(i).changeCurrentSelection(1);
+                                    break;
+                                case 1://reset
+                                   dropdowns.get(i).changeCurrentSelection(-1);
+                                    break;
+
+                            }
+                        }
+                    }
+                }
+            }
 
 
             return true;
@@ -214,7 +276,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
         if (grid.getWinner()>=0){
             System.out.println("A WINNER HAS BEEN FOUND!!!");
-            displayMenu = true;
+            displayMenu = !displayNewGameMenu;
         }
 
     }
@@ -248,10 +310,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             //bg.draw(canvas);
             //grid.draw(canvas);
 
-            if (displayMenu){
-                popupMenu.draw(canvas);
-
-            }
+            if (displayMenu){popupMenu.draw(canvas);}
+            if (displayNewGameMenu){newGameMenu.draw(canvas);}
 
 
             //bg.draw(canvas);
@@ -261,6 +321,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
                // basket.draw(canvas);
             }
+
+            //for (int i = 0; i < dropdowns.size(); i++){
+            //    if(dropdowns.get(i).isShouldDraw()){
+            //        dropdowns.get(i).draw(canvas);
+            //    }
+            //}
 
 
 
@@ -300,6 +366,48 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
     public void checkWinner(){
         grid.winStatus();
+    }
+
+    public void createMenus(){
+
+        double standardButtonScale = .25;
+
+        //in game popup
+        int popupX = (15*(Swidth/100)), popupY = (15*(Sheight/100)), popupW = (70*(Swidth/100)), popupH = (70*(Sheight/100));//base the button locations off these
+
+        games.bb.myfirstgame.Button[] popupButtons = new games.bb.myfirstgame.Button[3];
+        popupButtons[0] = new games.bb.myfirstgame.Button(BitmapFactory.decodeResource(getResources(), R.drawable.buttonorangeclose),
+                popupX+95*popupW/100-(int)(standardButtonScale*BitmapFactory.decodeResource(getResources(), R.drawable.buttonorangeclose).getWidth()),popupY+85*popupH/100,standardButtonScale);//close
+        popupButtons[1] = new games.bb.myfirstgame.Button(BitmapFactory.decodeResource(getResources(), R.drawable.buttonorangereset),popupX+5*popupW/100,popupY+85*popupH/100,standardButtonScale);//reset
+        popupButtons[2] = new games.bb.myfirstgame.Button(BitmapFactory.decodeResource(getResources(), R.drawable.buttonorangenewgame),
+                popupX+50*popupW/100-(int)(standardButtonScale*BitmapFactory.decodeResource(getResources(), R.drawable.buttonorangenewgame).getWidth()/2),popupY+5*popupH/100,standardButtonScale);//new game
+
+        popupMenu = new PopupMenu(popupX,popupY,popupW,popupH,popupButtons);
+
+        //new game menu
+        popupX = (15*(Swidth/100)); popupY = (15*(Sheight/100)); popupW = (70*(Swidth/100)); popupH = (70*(Sheight/100));//base the button locations off these
+
+        popupButtons = new games.bb.myfirstgame.Button[0];
+        Dropdown[] tempDrops = new Dropdown[1];
+
+        games.bb.myfirstgame.Button[] upDown = new games.bb.myfirstgame.Button[2];
+        upDown[0] = new games.bb.myfirstgame.Button(BitmapFactory.decodeResource(getResources(), R.drawable.buttonorangeup),0,0,.25);
+        upDown[1] = new games.bb.myfirstgame.Button(BitmapFactory.decodeResource(getResources(), R.drawable.buttonorangedown),0,0,.25);
+
+        games.bb.myfirstgame.Button mainDrop = new games.bb.myfirstgame.Button(BitmapFactory.decodeResource(getResources(), R.drawable.buttonorangegametype),
+                popupX+50*popupW/100-(int)(standardButtonScale*BitmapFactory.decodeResource(getResources(), R.drawable.buttonorangenewgame).getWidth()/2),popupY+5*popupH/100,standardButtonScale);//new game
+
+        tempDrops[0] = new Dropdown(new String[] {"Choose one","Standard", "Sandbox"},upDown,mainDrop);
+
+        dropdowns.add(tempDrops[0]);
+
+
+        newGameMenu = new PopupMenu(popupX,popupY,popupW,popupH,popupButtons,tempDrops);
+
+    }
+
+    public void createDropdown(){
+
     }
 
 

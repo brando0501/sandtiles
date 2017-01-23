@@ -14,7 +14,8 @@ import static games.bb.myfirstgame.MainThread.canvas;
 public class PopupMenu {
 
     private int x,y,width,height;
-    private Button[] buttons;
+    private Button[] buttons = new Button[0];
+    private Dropdown[] dropdowns = new Dropdown[0];
 
     public PopupMenu(int xpos, int ypos, int w, int h, Button[] b){
         x=xpos;
@@ -23,6 +24,17 @@ public class PopupMenu {
         height=h;
 
         buttons = b;
+
+    }
+
+    public PopupMenu(int xpos, int ypos, int w, int h, Button[] b, Dropdown[] d){
+        x=xpos;
+        y=ypos;
+        width=w;
+        height=h;
+
+        buttons = b;
+        dropdowns = d;
 
     }
 
@@ -53,10 +65,14 @@ public class PopupMenu {
             buttons[i].draw(canvas);
         }
 
-        //draw lables
+        //draw drops
+        for (int i = 0;i<dropdowns.length;i++){
+            dropdowns[i].draw(canvas);
+        }
 
 
     }
 
     public Button[] getButtons(){return buttons;}
+    public Dropdown[] getDropdowns(){return dropdowns;}
 }
