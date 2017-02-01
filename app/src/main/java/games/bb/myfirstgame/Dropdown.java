@@ -37,7 +37,7 @@ public class Dropdown {
         optionsPaint.setARGB(255,0,0,0);
         optionsPaint.setStrokeWidth(GamePanel.Swidth/50);
         optionsPaint.setFlags(TextPaint.ANTI_ALIAS_FLAG);
-        optionsPaint.setTextSize(displayAtOnce*7*GamePanel.Swidth/300);
+        optionsPaint.setTextSize(displayAtOnce*7*GamePanel.Sheight/350);
 
     }
 
@@ -53,16 +53,23 @@ public class Dropdown {
         optionsPaint.setARGB(255,0,0,0);
         optionsPaint.setStrokeWidth(GamePanel.Swidth/50);
         optionsPaint.setFlags(TextPaint.ANTI_ALIAS_FLAG);
-        optionsPaint.setTextSize(displayAtOnce*7*GamePanel.Swidth/300);
+        optionsPaint.setTextSize(displayAtOnce*7*GamePanel.Sheight/350);
 
+    }
+
+    public void drawMainButton(Canvas C){
+        mainButton.draw(C);
     }
 
     public void draw(Canvas C){
         int x,y,width,height;
 
-        mainButton.draw(C);
+
+        //drawMainButton(C);
 
         if (drawDrop) {
+
+
 
             Paint paint = new Paint();
             paint.setARGB(255, 200, 200, 200);
@@ -125,7 +132,7 @@ public class Dropdown {
                     optionsPaint.setARGB(255, 0, 0, 0);
                     optionsPaint.setFakeBoldText(true);
                 }
-                C.drawText(options[actuali],x+width/2-textWidth/2,y+textHeight*(i+1),optionsPaint);
+                C.drawText(options[actuali],x+width/2-textWidth/2-1*(GamePanel.Swidth/100),y+textHeight*(i+1),optionsPaint);
 
 
                 optionsPaint.setFakeBoldText(false);
@@ -167,9 +174,18 @@ public class Dropdown {
         }
     }
 
-    public int getCurrentSelection(){
+    public int getCurrentSelectionXY(){
         System.out.println("current selection" + currentSelection);
         return getShiftedDimensions(currentSelection);
+    }
+
+    public int getCurrentSelection(){
+        System.out.println("current selection" + currentSelection);
+        return getNormalizedPos(currentSelection);
+    }
+
+    public int getNormalizedPos(int i){
+        return (i+options.length)%options.length;
     }
 
     public int getShiftedDimensions(int i){

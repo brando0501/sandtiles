@@ -21,8 +21,8 @@ public class Button {
         x=xpos;
         y=ypos;
         scale = s;
-        width = (int)(i.getWidth()*s);
-        height = (int)(i.getHeight()*s);
+        height = (int)(GamePanel.HEIGHT*s);
+        width = (int)(i.getWidth()*height/i.getHeight());
 
         image = Bitmap.createScaledBitmap(
                 i, width, height, true);

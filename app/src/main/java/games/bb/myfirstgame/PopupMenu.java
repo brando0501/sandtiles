@@ -20,8 +20,10 @@ public class PopupMenu {
     public PopupMenu(int xpos, int ypos, int w, int h, Button[] b){
         x=xpos;
         y=ypos;
-        width=w;
-        height=h;
+        //width=w;
+        //height=h;
+        width = GamePanel.Swidth - x*2;
+        height = GamePanel.Sheight - y*2;
 
         buttons = b;
 
@@ -30,8 +32,10 @@ public class PopupMenu {
     public PopupMenu(int xpos, int ypos, int w, int h, Button[] b, Dropdown[] d){
         x=xpos;
         y=ypos;
-        width=w;
-        height=h;
+        //width=w;
+        //height=h;
+        width = GamePanel.Swidth - x*2;
+        height = GamePanel.Sheight - y*2;
 
         buttons = b;
         dropdowns = d;
@@ -66,9 +70,16 @@ public class PopupMenu {
         }
 
         //draw drops
-        for (int i = 0;i<dropdowns.length;i++){
+        for (int i = 0;i<dropdowns.length;i++){//main buttons
+            dropdowns[i].drawMainButton(canvas);
+        }
+        for (int i = 0;i<dropdowns.length;i++){//active dropdowns
             dropdowns[i].draw(canvas);
         }
+
+
+
+
 
 
     }

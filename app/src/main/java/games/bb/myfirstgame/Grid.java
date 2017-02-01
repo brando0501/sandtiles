@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import java.util.Random;
+
 
 /**
  * Created by brand on 1/20/2017.
@@ -23,6 +25,8 @@ public class Grid {
     private int players = 2;
     private int tilesToWin = 2;//tiles allowed to NOT be owned by winner
     private int winner = -1;//-1 until winner declared
+    private int xShift = 0;
+    private int seed = 0;
 
 
 
@@ -38,25 +42,37 @@ public class Grid {
 
 
     //this looks backwards but it is so that you can make a grid with the input in form (x,y)
-    public Grid(int c, int r){
+    public Grid(int c, int r, int s){
         rows = r;
         columns = c;
         height = GamePanel.Sheight;
         width = GamePanel.Swidth;
-        spacing = (int)(Integer.valueOf(width).doubleValue()/(double)(c+2));
+        if(((double)r/(double)c) > (3.0*(double)height/4.0)/(double)width){
+            spacing = (int)((Integer.valueOf(height).doubleValue()-25*(height/100))/(double)(r+2));
+            xShift = (int)(((width-(spacing*2))/2.0)-((c * spacing)/2.0));
+
+        }
+        else{
+            spacing = (int)(Integer.valueOf(width).doubleValue()/(double)(c+2));
+
+        }
+
 
         tilesToWin = (int)(((rows*columns))/4.0);
 
         tiles = new Tile[c][r];
 
         int middle = height/2;
-
         //order like reading a book top left to bottom right
-        for (int i = 0; i < columns; i++){
-            for (int j = 0; j < rows; j++){
-                tiles[i][j] = new Tile(spacing*(i+1),(int)(middle-(spacing/2.0)*rows)+spacing*(j),spacing,i,j, -1);
+        for (int i = 0; i < columns; i++) {
+            for (int j = 0; j < rows; j++) {
+                tiles[i][j] = new Tile(xShift + spacing * (i + 1), (int) (middle - (spacing / 2.0) * rows) + spacing * (j), spacing, i, j, -1);
 
             }
+        }
+        seed = s;
+        if (seed == 0) {
+           seedTiles();
         }
 
 
@@ -72,7 +88,7 @@ public class Grid {
         C.drawRGB(222,222,222);
 
         Paint paint = new Paint();
-        paint.setStrokeWidth(width/(20*columns));
+        paint.setStrokeWidth(10*spacing/100);
         paint.setARGB(255,244,84,32);
         paint.setFlags(TextPaint.ANTI_ALIAS_FLAG);
 
@@ -82,21 +98,21 @@ public class Grid {
 
         //vertical
         for (int i = 0; i<=columns; i++){
-            C.drawLine(spacing*(i+1)+paint.getStrokeWidth()/2,(int)(middle-(spacing/2.0)*rows),
-                    spacing*(i+1)+paint.getStrokeWidth()/2,(int)(middle+(spacing/2.0)*rows),paint);
+            C.drawLine(xShift+spacing*(i+1)+paint.getStrokeWidth()/2,(int)(middle-(spacing/2.0)*rows),
+                    xShift+spacing*(i+1)+paint.getStrokeWidth()/2,(int)(middle+(spacing/2.0)*rows),paint);
         }
 
         //horizontal
         for (int i = 0; i<=rows; i++){
-            C.drawLine(spacing+paint.getStrokeWidth()/2,(int)(middle-(spacing/2.0)*rows)+spacing*(i),
-                    spacing*(columns+1)+paint.getStrokeWidth()/2,(int)(middle-(spacing/2.0)*rows)+spacing*(i),paint);
+            C.drawLine(xShift+spacing+paint.getStrokeWidth()/2,(int)(middle-(spacing/2.0)*rows)+spacing*(i),
+                    xShift+spacing*(columns+1)+paint.getStrokeWidth()/2,(int)(middle-(spacing/2.0)*rows)+spacing*(i),paint);
         }
 
         //dot corners TL BL TR BR
-        C.drawCircle(spacing+paint.getStrokeWidth()/2,(int)(middle-(spacing/2.0)*rows),paint.getStrokeWidth()/2,paint);
-        C.drawCircle(spacing+paint.getStrokeWidth()/2,(int)(middle+(spacing/2.0)*rows),paint.getStrokeWidth()/2,paint);
-        C.drawCircle(spacing*(columns+1)+paint.getStrokeWidth()/2,(int)(middle-(spacing/2.0)*rows),paint.getStrokeWidth()/2,paint);
-        C.drawCircle(spacing*(columns+1)+paint.getStrokeWidth()/2,(int)(middle+(spacing/2.0)*rows),paint.getStrokeWidth()/2,paint);
+        C.drawCircle(xShift+spacing+paint.getStrokeWidth()/2,(int)(middle-(spacing/2.0)*rows),paint.getStrokeWidth()/2,paint);
+        C.drawCircle(xShift+spacing+paint.getStrokeWidth()/2,(int)(middle+(spacing/2.0)*rows),paint.getStrokeWidth()/2,paint);
+        C.drawCircle(xShift+spacing*(columns+1)+paint.getStrokeWidth()/2,(int)(middle-(spacing/2.0)*rows),paint.getStrokeWidth()/2,paint);
+        C.drawCircle(xShift+spacing*(columns+1)+paint.getStrokeWidth()/2,(int)(middle+(spacing/2.0)*rows),paint.getStrokeWidth()/2,paint);
 
         Paint numbers = new Paint();
 
@@ -127,7 +143,7 @@ public class Grid {
                         numbers.setARGB(255, 152, 66, 244);
                         break;
                 }
-                C.drawText(new Integer(tiles[i][j].getCount()).toString(),spacing*(i+1)+(int)((spacing/100.0)*23.0),
+                C.drawText(new Integer(tiles[i][j].getCount()).toString(),xShift+spacing*(i+1)+(int)((spacing/100.0)*23.0),
                         (int)(middle-(spacing/2.0)*rows)+spacing*(j)+(int)((spacing/100.0)*87.0),numbers);
 
             }
@@ -207,6 +223,27 @@ public class Grid {
         return false;
     }
 
+
+    public void seedTiles(){
+        int r = 0, c = 0;
+        Random rand = new Random();
+
+        for (int i = 0; i < 3 * rows * columns / 2; i++){
+            r = rand.nextInt(rows);
+            c = rand.nextInt(columns);
+            playerSlot = turns%players;
+            turns++;
+            if (tiles[c][r].increase(playerSlot)) {
+                rippleTiles(c, r);
+            }
+
+        }
+
+        if (Math.abs(playerStatus(0)-playerStatus(1)) > 0) seedTiles();
+
+        turns = 0;
+    }
+
     public void rippleTiles(int i, int j){
         //have to reference all tiles from here to avoid static issues
         if(i-1>=0){if(tiles[i-1][j].increase(playerSlot)){
@@ -249,4 +286,7 @@ public class Grid {
     public int getRows(){return rows;}
 
     public int getColumns(){return columns;}
+
+    public int getSeed(){return seed;}
+
 }
